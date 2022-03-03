@@ -1,0 +1,333 @@
+---
+title: "Bookdown"
+output: markdowntemplates::skeleton
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Introduccción
+
+Bookdown es una herramienta de R que nos ayuda a crear libros dentro del ambiente de R. Se puede visualizar el libro en diferentes formatos de salida, tales como en HTML, PDF o Ebooks; también, a través de diferentes herramientas, podemos modificar el formato, la visualización y modo de publicación del libro. 
+
+## Un primer vistazo
+
+Para empezar se requiere instalar la paqutería **bookdown** en R. Se puede utilizar tanto R como Rstudio para el manejo de esta paquetería.
+
+Una primera demostración de un libro creado, se puede acceder a través del siguiente Link:  https://github.com/rstudio/bookdown-demo 
+
+Aquí, podemos descargar el repositorio de Github en un archivo Zip y extraerlo en nuestra computadora. Después, abrir el documento ```bookdown-demo.Rproj```, abrir el archivo ```index.Rmd``` y darle click al botón ```Build Book``` en la pestaña ```Build``` de Rstudio (**Nota:** Esto solo funciona en RStudio). 
+
+El documento anterior nos da una plantilla en la que podremos trabajar en Bookdown, sin embargo, existen documentos en los cuales pueden parecer muy avanzados con el conocimiento mínimo. De esta forma, es posible ver otro repositorio con una versión básica de un libro Bookdown en el siguiente Link:  https://github.com/yihui/bookdown-minimal.
+
+## Uso
+
+Un libro tipo bookdown contiene multiples capítulos y cada uno de ellos viven en archivos R markdown con la extensión .Rmd. Cada archivo R markdown deberá iniciar con el nombre del capítulo usando el identificador de título de Rmarkdown con el nombre del capítulo. Además, cada capútulo debe estar codificado en UTF-8. Por ejemplo:
+
+index.Rmd
+
+```
+# Prefacio {-}
+
+De qué va a tratar el tema 
+
+```
+01-Introduccion.Rmd
+
+```
+# Introducción
+
+Una introudcción al tema
+```
+
+02-literatura.Rmd
+```
+# Literatura
+
+Aquí va lo correspondiente a la literatura 
+```
+
+03-metodo.Rmd
+```
+# Método
+
+Aquí van los métodos
+```
+
+Por default bookdown junta, por orden, junta a todos los archivos Rmd con respecto a su número asociados. Archivos que empiecen con ```_``` son saltados, y si existe un documento llamado ```index.Rmd``` siempre va a ser tratado como el primer archivo cuando se junten los demás Rmds. Este archivo va a ser el que va a ser mostrado al acceder a nuestro libro; es el archivo que se mostrará por defecto si lo renderizamos a un formato HTML.
+
+Nosotros podríamos modificar el comportamiento anterior, creando un documento y denominado de la siguiente forma. ```_bookdown.yaml``` en el directorio donde está nuestro libro. O, también, podríamos un campo de nuestro YAML denominado ```rmd_files``` para definir nuestra propia lista de archivos y el orden en el que se van a mostrar. A continuación un ejemplo:
+
+```
+rmd_files: ["index.Rmd", "abstract.Rmd", "intro.Rmd"]
+
+```
+En este caso, bookdown utilizará los archivos que le hemos proporcionado para construir nuestro libro. Por otro lado, esta forma de incluir los archivos nos puede ayudar si queremos renderizar este libro tanto en formato PDF como en formato HTML. Para hacer esto, debemos especificar los archivos que corresponden a cada formato de salida como en el siguiente ejemplo: 
+
+```
+rmd_files:
+  html: ["index.Rmd", "abstract.Rmd", "intro.Rmd"]
+  latex: ["abstract.Rmd", "intro.Rmd"]
+```
+Al momento, podemos utilizar los siguiente formatos de salida: ```bookdown::pdf_book``` , ```bookdown::gitbook```, ```bookdown::html_book``` y ```bookdown::epub_book```.Para renderizar este tipo de formatos, podemos usar comandos de RStudio que nos ayudan en esta tarea. Una de las formas para cambiar los parámetros principales de estas funciones, es a través del YAML. La ventaja de utilizar RStudio, es que podemos resumir la tarea de indicar commandos, a través de botones que nos facilitan el acceso a ellos. Un ejemplo lo podemos ver en el siguiente código de YAML.
+
+```
+---
+site: "bookdown::bookdown_site"
+output:
+  bookdown::gitbook:
+    lib_dir: "book_assets"
+  bookdown::pdf_book:
+    keep_tex: yes
+---
+```
+
+Una vez hecho esto, podemos darle click al botón ```Build Book``` en el panel ```Build``` de Rstudio para compilar todos los archivos a un libro, o presionar el botón de ```Knit``` para compilar el capítulo en donde nos encontramos. 
+
+Además de estas configuraciones, podemos especificar configuraciones relacionadas con Pandoc en el YAML (información del documento que usualmente se encuentra hasta arriba del archivo Rmarkdown)  del primer archivo Rmd del libro, tales como el título, la fecha, el autor, etc. Por ejemplo:
+
+```
+--- 
+title: "Authoring A Book with R Markdown"
+author: "Yihui Xie"
+date: "`r Sys.Date()`"
+site: "bookdown::bookdown_site"
+output:
+  bookdown::gitbook: default
+documentclass: book
+bibliography: ["book.bib", "packages.bib"]
+biblio-style: apalike
+link-citations: yes
+---
+
+```
+
+En las siguientes secciones, veremos los componentes esenciales de Bookdown y como funcionan.
+  
+# Cosas que se pueden hacer en Bookdown
+
+En bookdown, se puede hacer los mismo que en Markdown de Pandoc (i.e lo que se puede hacer en los archivos Rmd), como poner ecuaciones, tablas, imágenes, etc. Además de tener la misma forma de incorporarse. Veamos unos ejemplos interesantes:
+
+## HTML Widgets
+
+Una de las ventajas de utilizar bookdown en HTML es que podemos hacer uso de funciones de HTML que nos podrían ayudar a que el libro se vea más interactivo. Por ejemplo:
+
+```{r}
+DT::datatable(iris)
+```
+
+```{r include=FALSE}
+library(tidyverse)
+```
+
+
+```{r}
+
+graf <- ggplot(iris, aes(x= Sepal.Length, y = Petal.Length )) + geom_point()
+plotly::ggplotly(graf)
+```
+
+
+## Páginas web y Shiny apps
+
+De igual manera que en la sección anterior, otra ventaja de trabajar con HTML como salida de nuestro libro, es que podemos conectarnos a páginas dentro del libro e incluso hacer uso de Shiny apps. Por ejemplo:
+
+```{r}
+knitr::include_app("https://yihui.shinyapps.io/miniUI/",
+  height = "600px")
+```
+
+
+# Formatos de salida
+
+## HTML
+
+La primera diferencia entre renderizar un libro a través de bookdown que renderizarlo como un documento RMarkdown es que el libro generará diferentes páginas HTMLs; por default, se creará una por cada capítulo. Esto nos otorga la ventaja de compartir diferentes secciones del libro a través de los URLs.  
+
+Actualmente se cuentan con los siguientes estilos para renderizar el libro en HTML:
+
+- Estilo Gitbook
+- Estilo Three-Column Bootstrap 
+- Estilo por defecto de Bootstrap
+- Estilo Tufte
+
+### Estilo Gitbook 
+
+El estilo Gitbook es un estilo prestado de Gitbook, un proyecto utilizado para crear libros utilizando Markdown. Sus principales características consiten en que tiene una barra deslizadora mostrando el contenido del libro y el cuerpo del libro en el centro. El diseño de este libro, es responsable de poner el tamaño de la ventana: los botones de navegación son mostrados en la parte izquierda/derecha del libro cuando la pantalla es los suficientemente grande y son mostrados hacia abajo, en caso contrario. 
+
+Para empezar un libro con formato Github es necesario abrir RStudio y hacer lo sigueinte: File > New Project > New Directory > Book project using bookdown y seleccionar ```gitbook``` de la lista que aparece en el menú.
+
+Al igual que en los demás formatos de salida, podemos configurar diferentes opciones de Gitbook que se adecuen a nuestras necesidades, tal y como se muestra en el siguiente ejemplo: 
+
+```
+bookdown::gitbook:
+  config:
+    toc:
+      collapse: subsection
+      scroll_highlight: true
+      before: null
+      after: null
+    toolbar:
+      position: fixed
+    edit : null
+    download: null
+    search:
+      engine: lunr # or fuse
+      # options to control/tune search engine behavior (for
+      # fuse.js, refer to https://fusejs.io/api/options.html)
+      options: null
+    fontsettings:
+      theme: white
+      family: sans
+      size: 2
+    sharing:
+      facebook: true
+      github: false
+      twitter: true
+      linkedin: false
+      weibo: false
+      instapaper: false
+      vk: false
+      whatsapp: false
+      all: ['facebook', 'twitter', 'linkedin', 'weibo', 'instapaper']
+    info: true
+```
+
+El control toc, nos ayuda a crear una tabla de contenidos. Podemos colapsar algunos elementos de esta tabla contenidos con ```collapse: subsection```. Con ```scroll_highlight: true``` nos indica en qué capítulo estamos, iluminando el nombre de cada uno. 
+
+Los demás argumentos sirven para cambiar el tema, la bibliografía y anexar links que nos ayuden a compartir nuestro libro o que sean referenciados para futuros cambios o comentarios en el libro.
+
+Este estilo viene proporcionado con una barra al principio de la página que nos ayuda a cambiar dinámicamente las opciones del libro, tales como el tema sobre el que está el lbro, buscar alguna palabra en específico para algún capítulo o ajustar el tamaño de letra. Por ejemplo, la siguiente línea de comandos en YAML, nos proporciona una manera de cambiar las opciones predeterminadas:
+
+```
+# changing the default
+    fontsettings:
+      theme: night
+      family: serif
+      size: 3
+```
+
+### Estilo Three-Column Bootstrap 
+
+El estilo Three-Column Bootstrap, también denominado como ```bs4_book()``` en R es un formato de salida construido con Bootstrap (programa). Este tipo de libro está creado para proveer un experiencia de lectura clara y limpia que se acomode tanto a teléfonos, como a tables o en la misma computadora. En pantalla completa, el estilo ```bs4_book()``` tres columnas de contenido para que el usuario pueda ver todos los capítulos a la izquierda, el capítulo por el cual se está navegando en el centro y las secciones dentro del capítulo en la parte izquierda. Un ejemplo de este libro, lo podemos encontrar en el siguiente link: https://mastering-shiny.org
+
+Además de los componentes básicos de bookdown (Sección 2), las características principales de bs4_book son:
+
+-Fácil personalización de colores y fuentes con el paquete bslib.
+
+-Búsqueda integrada (desglosada por sección) que ayuda a los lectores a encontrar rápidamente lo que buscan.
+
+-Una barra lateral que contiene una tabla de contenido dentro del capítulo que facilita la navegación y ayuda a proporcionar contexto sobre su posición actual dentro del capítulo.
+
+-Tipografía reflexiva para que el contenido sea lo más fácil de leer posible, independientemente del tamaño de su dispositivo. Un encabezado adhesivo se quita de su camino cuando lee, pero es fácilmente accesible si lo necesita.
+
+-Las notas al pie en línea significan que puede leer aparte junto al texto al que se refieren. Este tema se combina mejor con un estilo de referencia que genera notas al pie.
+
+- Metadatos mejorados para compartir en redes sociales a través de plataformas como Twitter, LinkedIn y Facebook, de modo que cada capítulo compartido tenga una descripción única, generada automáticamente en función del contenido de ese capítulo.
+
+- Capacidad para configurar enlaces a un repositorio remoto como GitHub o GitLab, lo que permite a los lectores ver fácilmente el archivo fuente de cada capítulo o sugerir una edición.
+
+Para escribir un libro con formato ```bs4_book()``` es abriendo RStudio y haciendo lo sigueinte: File > New Project > New Directory > Book project using bookdown y seleccionar ```bs4_book()``` del menú desplazable.
+
+El formato ```bs4_book()``` está diseñado en el marco de trabajo de Bootstrap CSS. Entonces, para modificar este tipo de formato como el color, el tema, etc. Es necesario saber CSS, no obstante, existe un paquete de R, **bslib**, que nos ayuda a modificar este formato de una forma fácil y práctica. De igual manera, podríamos agregar temas automáticamente importados. Veamos el siguiente ejemplo de YAML: 
+
+```
+bookdown::bs4_book:
+  theme:
+    primary: "#0d6efd"   
+    base_font: 
+      google: Sen
+    heading_font:
+      google:
+        family: Bitter
+        wght: 200
+    code_font:
+      google: 
+        # arguments to sass::font_google() 
+        family: DM Mono
+        local: false
+```
+
+### Estilo por defecto de Bootstrap
+
+Este formato, es el formato predeterminado que se utiliza en todos los formatos de salida de HTML de los documentos Rmarkdown. Podemos ver un ejemplo de este libro, también denominado ```html_book()``` por R, en el siguiente link: https://bookdown.org/yihui/bookdown-demo2
+
+### Estilo Tufte
+
+Este estilo es un caso especial del estilo anterior y utiliza los mismos parámetros de modificación. Podemos ver un ejemplo en el siguiente link:
+https://bookdown.org/yihui/bookdown-demo3/
+
+## LateX/PDF
+
+Bookdown recomienda utilizar formatos HTML en vez de LateX cuando estemos creando un libro, pues estos tienden a tener un formato más felxible. No obstante, podemos seguir usando este formato, cuidando al mismo tiempo los formatos de salida, etc. 
+
+En este formato, podemos incluir en el YAML, formatos de salida que incluyan el preambulo como cuando utilizamos LateX.
+
+## E-Books
+
+Existen dos formatos para libros electrónicos, EPUB y MOBI. Estos formatos nos ayudan a crear libros que puedan leerse en apliaciones especiales de tabletas, celulares o en formatos específicos como Kindle.
+
+Para crear formatos para e-books podemos hacer los siguiente:
+
+```
+epub_book(fig_width = 5, fig_height = 4, dev = "png",
+  fig_caption = TRUE, number_sections = TRUE, toc = FALSE,
+  toc_depth = 3, stylesheet = NULL, cover_image = NULL,
+  metadata = NULL, chapter_level = 1, epub_version = c("epub3",
+    "epub", "epub2"), md_extensions = NULL, global_numbering = !number_sections,
+  pandoc_args = NULL, template = "default")
+```
+Donde estos parámetros son compartidos por formatos vistos previamente. Existe más información en el siguiente link: https://bookdown.org/yihui/bookdown/e-books.html
+
+# Edición
+
+Para esta parte, en el caso de RStudio, podemos utilizar el Yaml para configuras las características de nuestro libro, tal y como lo hemos visto anteriormente. De igual manera, para modificar el formato de libros electrónicos, podemos agregar documentos CSS que cambien el formato en el que se muestran. Adicionalmente, podemos incluir otras características del programa Mathjax que nos ayuda a modificar como se muestran las ecuaciones en formatos HTML. Un ejemplo lo podemos ver en el siguiente código de YAML:
+
+```
+---
+output:
+  bookdown::gitbook:
+    includes:
+      in_header: mathjax-number.html
+---
+```
+
+De igual manera, podemos agregar preambulos en el caso de que el formato final sea un PDF.
+
+```
+---
+output:
+  bookdown::pdf_book:
+    includes:
+      in_header: preamble.tex
+---
+```
+En donde el documento ```preamble.tex``` podría estar escrito de la siguiente manera:
+
+```
+\usepackage{booktabs}
+\usepackage{longtable}
+
+\ifxetex
+  \usepackage{letltxmacro}
+  \setlength{\XeTeXLinkMargin}{1pt}
+  \LetLtxMacro\SavedIncludeGraphics\includegraphics
+  \def\includegraphics#1#{% #1 catches optional stuff (star/opt. arg.)
+    \IncludeGraphicsAux{#1}%
+  }%
+  \newcommand*{\IncludeGraphicsAux}[2]{%
+    \XeTeXLinkBox{%
+      \SavedIncludeGraphics#1{#2}%
+    }%
+  }%
+\fi
+```
+
+
+# Publicación
+Existen distintas formas de publicar un libro Bookdown, sin embargo, la más fácil es através de Rstudio Connect, la cual es una plataforma que nos permite publicar documentos específicos de R como Shinyapps, páginas HTML generadas por archivos Rmd o libros. Para acceder a esta forma de publicación, basta tener una cuenta, y una vez renderizado el libro en RStudio, debe aparecer una opción para publicar ```publish```.
+
+Otra manera, igual efectiva, es subir nuestro libro a páginas que registren cambios o movimientos en los archivos, o que de cierta manera pueda trabajarse de manera colectiva. Para eso se puede utilizar páginas como Github o simulares.
+
+Para mayor profundización, se explica esto y lo anterior en el siguiente enlace: https://bookdown.org/yihui/bookdown/publishing.html
