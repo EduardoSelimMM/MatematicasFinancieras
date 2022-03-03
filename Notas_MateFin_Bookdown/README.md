@@ -11,3 +11,5 @@ Para publicar las notas en Pages de Github:
 5. Dar click en aceptar
 
 Y listo, esto hará que ya tengas un link en donde tengas publicado las notas de matemáticas financieras en Bookdown.
+
+De igual forma, te anexo el video en donde aprendí como publicar bookdowmns en Github: https://youtu.be/RdSmYvbQkhs
