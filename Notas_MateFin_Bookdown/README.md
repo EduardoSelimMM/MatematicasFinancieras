@@ -1,13 +1,13 @@
-Welcome! 
+Para publicar las notas en Pages de Github:
 
-This is a minimal example of a book based on R Markdown and **bookdown** (https://github.com/rstudio/bookdown). 
+1. Ir a la configuración de este repositorio
 
-This template provides a skeleton file structure that you can edit to create your book. 
+2. Ir hasta la parte de hasta abajo, en el apartado donde dice "Pages"
 
-The contents inside the .Rmd files provide some pointers to help you get started, but feel free to also delete the content in each file and start fresh.
+3. Dar click en el enlace
 
-Additional resources:
+4. En la parte source, indicar, primero la carpeta "Notas_MateFin_Bookdown" y luego la carpeta "docs"
 
-The **bookdown** book: https://bookdown.org/yihui/bookdown/
+5. Dar click en aceptar
 
-The **bookdown** package reference site: https://pkgs.rstudio.com/bookdown
+Y listo, esto hará que ya tengas un link en donde tengas publicado las notas de matemáticas financieras en Bookdown.
